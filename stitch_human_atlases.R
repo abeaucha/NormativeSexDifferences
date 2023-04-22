@@ -9,12 +9,10 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(RMINC))
 
 
-# Directories ----------------------------------------------------------------
-
-atlas_dir <- "data/human/atlas/"
-
-
 # Paths ----------------------------------------------------------------------
+
+#Directories 
+atlas_dir <- "data/human/atlas/"
 
 #Glasser atlas definitions
 defs_glasser <- "HCPex.csv"

@@ -10,37 +10,46 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(RMINC))
 
 
-# Directories ----------------------------------------------------------------
+# Paths ----------------------------------------------------------------------
 
+#Directories
 expr_dir <- "data/human/expression"
 atlas_dir <- "data/human/atlas"
+
+#Microarray sample expression matrix
+expr_file <- "HumanExpressionMatrix_samples_pipeline_abagen.csv"
+expr_file <- file.path(expr_dir, expr_file)
+
+#Microarray sample annotations
+coordinates_file <- "AHBA_microarray_coordinates_mni.csv"
+coordinates_file <- file.path(expr_dir, coordinates_file)
+
+#Microarray sample annotations
+annotations_file <- "AHBA_microarray_sample_annotations.csv"
+annotations_file <- file.path(expr_dir, annotations_file)
+
+#Atlas definitions
+defs_file <- "glasser_hypothalamus_defs.csv"
+defs_file <- file.path(atlas_dir, defs_file)
+
+#Atlas labels
+labels_file <- "glasser_hypothalamus_labels.mnc"
+labels_file <- file.path(atlas_dir, labels_file)
 
 
 # Main -----------------------------------------------------------------------
 
 #Import expression matrix
-expr_file <- "HumanExpressionMatrix_samples_pipeline_abagen.csv"
-expr_file <- file.path(expr_dir, expr_file)
 expr <- as_tibble(data.table::fread(expr_file, header = TRUE))
 
 #Import microarray coordinates
-coordinates_file <- "AHBA_microarray_coordinates_mni.csv"
-coordinates_file <- file.path(expr_dir, coordinates_file)
 coordinates <- read_csv(coordinates_file, show_col_types = FALSE)
 
 #Import microarray sample annotations
-annotations_file <- "AHBA_microarray_sample_annotations.csv"
-annotations_file <- file.path(expr_dir, annotations_file)
 annotations <- read_csv(annotations_file, show_col_types = FALSE)
 
 #Import atlas definitions
-defs_file <- "glasser_hypothalamus_defs.csv"
-defs_file <- file.path(atlas_dir, defs_file)
 defs <- read_csv(defs_file, show_col_types = FALSE)
-
-#Labels file
-labels_file <- "glasser_hypothalamus_labels.mnc"
-labels_file <- file.path(atlas_dir, labels_file)
 
 #Transpose expression matrix
 expr <- expr %>%

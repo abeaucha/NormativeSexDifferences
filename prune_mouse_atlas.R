@@ -52,13 +52,11 @@ leaf_nodes_lateral <- c("Piriform cortex",
 leaf_nodes_midline <- c("Midbrain", "Medulla", "Pons")
 
 
-# Directories ----------------------------------------------------------------
+# Paths ----------------------------------------------------------------------
 
+#Directories
 expr_dir <- "data/mouse/expression"
 atlas_dir <- "data/mouse/atlas"
-
-
-# Paths ----------------------------------------------------------------------
 
 #Neuroanatomical tree
 tree_file <- "MouseExpressionTree_DSURQE.RData"
