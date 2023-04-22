@@ -4,13 +4,19 @@
 #
 # 
 
-#Packages
+# Packages -------------------------------------------------------------------
+
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(RMINC))
 
-#Directories
+
+# Directories ----------------------------------------------------------------
+
 expr_dir <- "data/human/expression"
 atlas_dir <- "data/human/atlas"
+
+
+# Main -----------------------------------------------------------------------
 
 #Import expression matrix
 expr_file <- "HumanExpressionMatrix_samples_pipeline_abagen.csv"

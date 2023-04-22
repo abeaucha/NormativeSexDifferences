@@ -4,13 +4,19 @@
 #
 # 
 
-#Packages
+# Packages -------------------------------------------------------------------
+
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(RMINC))
 
-#Directories
+
+# Directories ----------------------------------------------------------------
+
 expr_dir <- "data/mouse/expression/"
 atlas_dir <- "data/mouse/atlas"
+
+
+# Main -----------------------------------------------------------------------
 
 #Import voxelwise expression matrix
 expr_file <- "MouseExpressionMatrix_voxel_coronal_log2_grouped_imputed.csv"
