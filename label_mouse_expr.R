@@ -10,6 +10,33 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(RMINC))
 
 
+# Functions ------------------------------------------------------------------
+
+#' Calculate a robust sigmoid transformation
+#'
+#' @param x (numeric vector) Input data to transform
+#' @return (numeric vector) Transformed data
+robust_sigmoid <- function(x) {
+  IQR_x <- IQR(x)/(qnorm(0.75) - qnorm(0.25))
+  y <- 1/(1 + exp(-1*(x - median(x))/IQR_x))
+  return(y)
+}
+
+
+#' Calculate a min-max transformation
+#'
+#' @param x (numeric vector) Input data to transform
+#' @return (numeric vector) Transformed data
+min_max <- function(x){(x - min(x))/(max(x) - min(x))}
+
+
+#' Calculate a scaled robust sigmoid transformation
+#'
+#' @param x (numeric vector) Input data to transform
+#' @return (numeric vector) Transformed data
+scaled_robust_sigmoid <- function(x) {min_max(robust_sigmoid(x = x))}
+
+
 # Paths ----------------------------------------------------------------------
 
 #Directories
@@ -47,11 +74,13 @@ labels <- round(mincGetVolume(labels_file))
 #Import brain mask
 mask <- mincGetVolume(mask_file)
 
-#Transpose expression matrix 
+#Normalize expression matrix
+#Note: There's an implicitly transpose resulting from the second apply()
 expr <- expr %>% 
   column_to_rownames("Gene") %>% 
   as.matrix() %>% 
-  t() %>% 
+  apply(MARGIN = 2, FUN = scaled_robust_sigmoid) %>% 
+  apply(MARGIN = 1, FUN = scaled_robust_sigmoid) %>% 
   as_tibble()
 
 #Apply mask to labels
