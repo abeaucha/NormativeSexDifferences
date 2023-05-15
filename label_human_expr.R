@@ -1,6 +1,6 @@
 # label_human_expr.R
 # Author: Antoine Beauchamp
-# Edited: April 22nd, 2023
+# Edited: May 15th, 2023
 #
 # 
 
@@ -29,12 +29,22 @@ annotations_file <- "AHBA_microarray_sample_annotations.csv"
 annotations_file <- file.path(expr_dir, annotations_file)
 
 #Atlas definitions
-defs_file <- "glasser_hypothalamus_defs.csv"
-defs_file <- file.path(atlas_dir, defs_file)
+defs_files <- c("glasser_defs.csv",
+                "hypothalamus_defs.csv",
+                "subcortical_defs.csv",
+                "brainstem_defs.csv",
+                "hippocampus_amygdala_defs.csv",
+                "hippocampus_amygdala_defs.csv")
+defs_files <- file.path(atlas_dir, defs_files)
 
 #Atlas labels
-labels_file <- "glasser_hypothalamus_labels.mnc"
-labels_file <- file.path(atlas_dir, labels_file)
+labels_files <- c("glasser_labels.mnc",
+                  "hypothalamus_labels.mnc",
+                  "subcortical_labels.mnc",
+                  "brainstem_labels.mnc",
+                  "hippocampus_amygdala_labels_left.mnc",
+                  "hippocampus_amygdala_labels_right.mnc")
+labels_files <- file.path(atlas_dir, labels_files)
 
 
 # Main -----------------------------------------------------------------------
@@ -48,9 +58,6 @@ coordinates <- read_csv(coordinates_file, show_col_types = FALSE)
 #Import microarray sample annotations
 annotations <- read_csv(annotations_file, show_col_types = FALSE)
 
-#Import atlas definitions
-defs <- read_csv(defs_file, show_col_types = FALSE)
-
 #Transpose expression matrix
 expr <- expr %>%
   column_to_rownames("Gene") %>%
@@ -61,21 +68,38 @@ expr <- expr %>%
 #Filter microarray data for good samples
 expr <- expr[annotations[["keep"]],]
 
-#Get atlas labels at microarray locations
-structs <- character(nrow(coordinates))
-for (i in 1:nrow(coordinates)) {
-  x <- coordinates[[i, "x"]]
-  y <- coordinates[[i, "y"]]
-  z <- coordinates[[i, "z"]]
-  label <- mincGetWorldVoxel(filenames = labels_file, v1 = x, v2 = y, v3 = z)
-  label <- round(label)
-  if (label != 0) {
-    structs[i] <- defs[label == defs[["label"]], "name"][[1]]
+# Initialize a tibble to store atlas regions
+regions <- matrix(nrow = nrow(coordinates), 
+                  ncol = length(defs_files))
+colnames(regions) <- c("glasser", "hypothalamus",
+                       "subcortical", "brainstem", 
+                       "left_hipp_amyg", "right_hipp_amyg")
+regions <- as_tibble(regions)
+
+#Iterate over atlases and microarray samples
+for (j in 1:ncol(regions)) {
+  
+  message(paste("Processing atlas:", colnames(regions)[j]))
+  
+  #Import atlas definitions
+  defs <- read_csv(defs_files[j], show_col_types = FALSE)
+  
+  #Get atlas labels at microarray locations
+  for (i in 1:nrow(coordinates)) {
+    x <- coordinates[[i, "x"]]
+    y <- coordinates[[i, "y"]]
+    z <- coordinates[[i, "z"]]
+    label <- mincGetWorldVoxel(filenames = labels_files[j], v1 = x, v2 = y, v3 = z)
+    label <- round(label)
+    if (label != 0) {
+      regions[i,j] <- defs[label == defs[["label"]], "name"][[1]]
+    }
   }
 }
+colnames(regions) <- str_c("Region_", colnames(regions))
 
 #Label expression matrix with ROIs
-expr[["Region"]] <- structs
+expr <- bind_cols(expr, regions)
 
 #Export labelled expression matrix
 outfile <- "human_expression_matrix.csv"
