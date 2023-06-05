@@ -75,7 +75,7 @@ labels <- round(mincGetVolume(labels_file))
 mask <- mincGetVolume(mask_file)
 
 #Normalize expression matrix
-#Note: There's an implicitly transpose resulting from the second apply()
+#Note: There's an implicit transpose resulting from the second apply()
 expr <- expr %>% 
   column_to_rownames("Gene") %>% 
   as.matrix() %>% 

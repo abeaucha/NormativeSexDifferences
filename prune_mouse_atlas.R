@@ -39,8 +39,10 @@ leaf_nodes_lateral <- c("Piriform cortex",
                         "Primary visual area",
                         "Temporal association areas",
                         "Posterior parietal association areas",
-                        "Pallidum",
+                        "Pallidum, ventral region",
                         "Bed nuclei of the stria terminalis",
+                        "Pallidum, dorsal region",
+                        "Pallidum, medial region",
                         "Striatum ventral region",
                         "Caudoputamen",
                         "Thalamus",
@@ -70,7 +72,7 @@ labels_file <- file.path(atlas_dir, labels_file)
 # Main -----------------------------------------------------------------------
 
 #Load mouse neuroanatomical tree
-load(treefile)
+load(tree_file)
 tree <- Clone(treeMouseExpr)
 rm(treeMouseExpr)
 
